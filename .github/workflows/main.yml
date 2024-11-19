@@ -1,0 +1,42 @@
+name: Docker Image CI
+on:
+  workflow_dispatch:
+ # push:
+ #   branches: [ "main" ]
+ # pull_request:
+ #   branches: [ "main" ]
+env:
+  AWS_REGION: us-east-1
+  ECR_REPOSITORY: MY_ECR_REPOSITORY
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Build the Docker image
+      run: docker build . --file Dockerfile --tag my-image-name:v1
+
+    - name: "Configure AWS Credentials"
+      id: Configure-AWS
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        aws-region: ${{ env.AWS_REGION }}
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+    - name: Amazon ECR "Login"
+      id: login-AWS-ECR
+      uses: aws-actions/amazon-ecr-login@v2
+
+    - name: Build and push Docker images
+      id: build-image-push-to-aws-ecr
+      uses: docker/build-push-action@v6.9.0
+      with:
+        push: true
+        tags: my-container:v1
+  
+    #- name: setup-docker
+    #  uses: docker-practice/actions-setup-docker@v1
+      
