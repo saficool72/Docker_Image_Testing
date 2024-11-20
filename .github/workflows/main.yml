@@ -31,11 +31,11 @@ jobs:
       uses: docker/setup-buildx-action@v3.7.1
       #uses: docker/setup-buildx-action@v3
       
-    - name: Amazon ECR "Login"
+    - name: Authenticate to AWS ECR
       id: login-ecr
       uses: aws-actions/amazon-ecr-login@v2
     
-    - name: build docker image
+    - name: Build docker image
       run: |
         #docker build -t ${{ secrets.ECR_REPOSITORY }}:latest .
         docker build -t my-image:v1 .
@@ -54,11 +54,11 @@ jobs:
 
     - name: Tag the Image
       run: |
-        docker tag my-image:v1 992382446442.dkr.ecr.us-east-1.amazonaws.com/my-ecr-repo
+        docker tag my-image:v1 ${{ secrets.ECR_REPOSITORY }}
 
     - name: Push the Image to Aws ECR
       run: |
-        docker push 992382446442.dkr.ecr.us-east-1.amazonaws.com/my-ecr-repo:latest
+        docker push ${{ secrets.ECR_REPOSITORY }}:latest
         
     #- name: Tag Docker image
     #  run: |
