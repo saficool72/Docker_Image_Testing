@@ -41,11 +41,11 @@ jobs:
         docker build -t my-image:v1 .
     - name: Run container in detach mode
       run: |
-        docker run --name my-cont1 -p 80:80 -d my-image:v1
+        docker run --name my-cont1 -p 8081:80 -d my-image:v1
 
     #- name: Validate the web page
     #  run: |
-    #    curl localhost:80
+    #    curl localhost:8081
         
     - name: Check IP address
       run: |
