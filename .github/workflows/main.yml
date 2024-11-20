@@ -34,12 +34,25 @@ jobs:
       id: login-ecr
       uses: aws-actions/amazon-ecr-login@v2
     
-   # - name: build docker image
-   #   run: |
-   #     docker build -t ${{ secrets.ECR_REPOSITORY }}:latest .
-   # - name: Tag Docker image
-   #  run: |
-   #     docker tag ${{ secrets.ECR_REPOSITORY }}:latest ${{ secrets.ECR_REPOSITORY }}:latest
+    - name: build docker image
+      run: |
+        #docker build -t ${{ secrets.ECR_REPOSITORY }}:latest .
+        docker build -t my-image:v1 .
+    - name: Run container in detach mode
+      run: |
+        docker run --name my-cont1 -p 80:80 -d my-image:v1
+
+    - name: Validate the web page
+      run: |
+        curl localhost:80
+    - name: Validate the web page
+      run: |
+        ip a
+        nmcli device show
+        
+    #- name: Tag Docker image
+    #  run: |
+    #    docker tag ${{ secrets.ECR_REPOSITORY }}:latest ${{ secrets.ECR_REPOSITORY }}:latest
    # - name: Push Docker image to AWS ECR
    #   run: |
    #     docker push ${{ secrets.ECR_REPOSITORY }}:latest
@@ -52,14 +65,22 @@ jobs:
    #   run: |
     #    docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG .
      #   docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
+
+   # - name: Docker meta
+   #   id: meta
+   #  uses: docker/metadata-action@v5
+   #   with:
+   #     images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+   #     tags: |
+   #         type=semver,pattern={{version}}
           
-    - name: Build and push Docker images
-      id: build-image-push-to-aws-ecr
-      uses: docker/build-push-action@v6.9.0
-      with:
-        context: .
-        push: true
-        tags: v7, latest
+   # - name: Build and push Docker images
+   #   id: build-image-push-to-aws-ecr
+   #   uses: docker/build-push-action@v6.9.0
+   #   with:
+   #     context: .
+   #     push: true
+   #     tags: ${{ steps.meta.outputs.tags }}
   
     #- name: setup-docker
     #  uses: docker-practice/actions-setup-docker@v1
