@@ -5,4 +5,4 @@ docker image testing
 
 **DNS Record**
 
-[2e31f276881c.mylabserver.com:80]
+[http://2e31f276881c.mylabserver.com:80]
