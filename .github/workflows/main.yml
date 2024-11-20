@@ -51,6 +51,14 @@ jobs:
       run: |
         curl https://api.ipify.org
         #curl api.ipify.org
+
+    - name: Tag the Image
+      run: |
+        docker tag my-image:v1 992382446442.dkr.ecr.us-east-1.amazonaws.com/my-ecr-repo
+
+    - name: Push the Image to Aws ECR
+      run: |
+        docker push 992382446442.dkr.ecr.us-east-1.amazonaws.com/my-ecr-repo:latest
         
     #- name: Tag Docker image
     #  run: |
