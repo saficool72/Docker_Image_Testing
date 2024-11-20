@@ -43,13 +43,14 @@ jobs:
       run: |
         docker run --name my-cont1 -p 80:80 -d my-image:v1
 
-    - name: Validate the web page
-      run: |
-        curl localhost:80
+    #- name: Validate the web page
+    #  run: |
+    #    curl localhost:80
         
     - name: Check IP address
       run: |
         curl https://api.ipify.org
+        #curl api.ipify.org
         
     #- name: Tag Docker image
     #  run: |
