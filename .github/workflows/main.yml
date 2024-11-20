@@ -45,10 +45,10 @@ jobs:
     - name: Validate the web page
       run: |
         curl localhost:80
-    - name: Validate the web page
+        
+    - name: Check IP address
       run: |
-        ip a
-        nmcli device show
+        curl https://api.ipify.org
         
     #- name: Tag Docker image
     #  run: |
