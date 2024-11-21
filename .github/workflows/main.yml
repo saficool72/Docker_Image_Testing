@@ -54,11 +54,16 @@ jobs:
 
     - name: Tag the Image
       run: |
-        docker tag my-image:v1 ${{ secrets.ECR_REPOSITORY }}
+        docker tag my-image:v1 ${{ secrets.ECR_REPOSITORY }}:latest
 
     - name: Push the Image to Aws ECR
       run: |
         docker push ${{ secrets.ECR_REPOSITORY }}:latest
+
+    - name: Image cleanup
+      if: always()
+      run: |
+        docker rmi my-image:v1
         
     #- name: Tag Docker image
     #  run: |
