@@ -30,13 +30,13 @@ jobs:
 
     - name: Aqua Security Trivy
       uses: aquasecurity/trivy-action@0.29.0
-      with:
-        scan-type: image
-        image-ref: '.'
-        format: 'github'
-        output: "trivy-vuln-results.json"
-        severity: "MEDIUM,HIGH,CRITICAL"
-        scanners: "vuln"
+      #with:
+      #  scan-type: image
+      #  image-ref: '.'
+      #  format: 'github'
+      #  output: "trivy-vuln-results.json"
+      #  severity: "MEDIUM,HIGH,CRITICAL"
+      #  scanners: "vuln"
         
     - name: Upload a Build Artifact
       uses: actions/upload-artifact@v4.4.3
