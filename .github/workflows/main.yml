@@ -10,15 +10,12 @@ env:
   
 jobs:
   build:
-    #runs-on: ubuntu-latest
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
+    #runs-on: self-hosted
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
     
-    #- name: Build the Docker image
-    #  run: docker build . --file Dockerfile --tag my-image-name:v1
-
     - name: "Configure AWS Credentials"
       id: Configure-AWS
       uses: aws-actions/configure-aws-credentials@v4
@@ -30,31 +27,35 @@ jobs:
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v3.7.1
       #uses: docker/setup-buildx-action@v3
-      
-    - name: Authenticate to AWS ECR
-      id: login-ecr
-      uses: aws-actions/amazon-ecr-login@v2
     
     - name: Build docker image
       run: |
-        #docker build -t ${{ secrets.ECR_REPOSITORY }}:latest .
-        docker build -t my-image:v1 .
-    - name: Run container in detach mode
+        docker build -t hk_image:v1 .
+        
+    - name: Filter docker image
       run: |
-        docker run --name my-cont1 -p 8081:80 -d my-image:v1
-
-    #- name: Validate the web page
-    #  run: |
-    #    curl localhost:8081
+        docker images --filter reference=hk_image:v1
+        
+   # - name: Run container in detach mode
+   #   run: |
+   #     docker run --name my-cont1 -p 8081:80 -d hk_image:v1
         
     - name: Check IP address
       run: |
         curl https://api.ipify.org
-        #curl api.ipify.org
 
+    - name: Authenticate to AWS ECR
+      id: login-ecr
+      uses: aws-actions/amazon-ecr-login@v2
+
+    #- name: create ECR repo
+    #  run: |
+    #    aws ecr create-repository --repository-name hk_nginx --region us-east-1
+    #891377196548.dkr.ecr.us-east-1.amazonaws.com/hk_nginx
+    
     - name: Tag the Image
       run: |
-        docker tag my-image:v1 ${{ secrets.ECR_REPOSITORY }}:latest
+        docker tag hk_image:v1 ${{ secrets.ECR_REPOSITORY }}:latest
 
     - name: Push the Image to Aws ECR
       run: |
@@ -63,7 +64,7 @@ jobs:
     - name: Image cleanup
       if: always()
       run: |
-        docker rmi my-image:v1
+        docker rmi hk_image:v1
         
     #- name: Tag Docker image
     #  run: |
