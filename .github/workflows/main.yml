@@ -84,11 +84,9 @@ jobs:
         scan-type: image
         severity: 'HIGH,CRITICAL'
         format: 'sarif'
-        output: 'trivy-vuln-results.sarif'
-       # format: 'json'
-       # output: "trivy-vuln-results.json"  # Save results to a file
+        output: 'trivy-vuln-results.sarif'  # Save results to SARIF file
 
-      # Upload Trivy Scan Results (SARIF format)
+    # Upload Trivy Scan Results to GitHub Security Tab
     - name: Upload Trivy Scan Results to GitHub Security Tab
       uses: github/codeql-action/upload-sarif@v2
       with:
