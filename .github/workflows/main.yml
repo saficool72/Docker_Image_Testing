@@ -15,15 +15,7 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
-    
-    - name: "Configure AWS Credentials"
-      id: Configure-AWS
-      uses: aws-actions/configure-aws-credentials@v4
-      with:
-        aws-region: ${{ env.AWS_REGION }}
-        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        
+
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v3.7.1
       #uses: docker/setup-buildx-action@v3
@@ -38,11 +30,18 @@ jobs:
         
    # - name: Run container in detach mode
    #   run: |
-   #     docker run --name my-cont1 -p 8081:80 -d hk_image:v1
-        
-    - name: Check IP address
-      run: |
-        curl https://api.ipify.org
+   #     docker run --name my-cont1 -p 8081:80 -d hk_image:v1     
+   # - name: Check IP address
+   #   run: |
+   #     curl https://api.ipify.org
+   
+    - name: "Configure AWS Credentials"
+      id: Configure-AWS
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        aws-region: ${{ env.AWS_REGION }}
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
     - name: Authenticate to AWS ECR
       id: login-ecr
