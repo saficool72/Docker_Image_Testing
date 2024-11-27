@@ -59,6 +59,14 @@ jobs:
     needs: docker_build  # This job will run after the "docker_build" job is completed
 
     steps:
+    - name: "Configure AWS Credentials"
+      id: Configure-AWS
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        aws-region: ${{ env.AWS_REGION }}
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        
     #- name: Download Docker image artifact
       #uses: actions/download-artifact@v2
     #  uses: ishworkh/docker-image-artifact-download@v2.1.0
@@ -75,16 +83,16 @@ jobs:
         image-ref: ${{ secrets.ECR_REPOSITORY }}:latest
         scan-type: image
         severity: 'HIGH,CRITICAL'
-        format: 'json'
-        output: "trivy-vuln-results.json"  # Save results to a file
+       # format: 'json'
+       # output: "trivy-vuln-results.json"  # Save results to a file
 
     # Upload Trivy scan results as an artifact
-    - name: Upload Trivy Scan Results
-      uses: actions/upload-artifact@v4.4.3
-      with:
-        name: trivy-vuln-results
-        path: ${{ github.workspace }}/trivy-vuln-results.json
-        retention-days: 10
+    #- name: Upload Trivy Scan Results
+    #  uses: actions/upload-artifact@v4.4.3
+    #  with:
+    #    name: trivy-vuln-results
+    #    path: ${{ github.workspace }}/trivy-vuln-results.json
+     #   retention-days: 10
 
     - name: Image cleanup
       if: always()
