@@ -1,10 +1,6 @@
 name: Docker Image CI
 on:
   workflow_dispatch:
-  #push:
-  #  branches: [ "main" ]
-  #pull_request:
-  #  branches: [ "main" ]
 
 env:
   AWS_REGION: us-east-1
@@ -12,7 +8,6 @@ env:
 jobs:
   build:
     runs-on: ubuntu-latest
-    #runs-on: self-hosted
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
@@ -58,18 +53,20 @@ jobs:
         image-ref: ${{ secrets.ECR_REPOSITORY }}:latest
         scan-type: image
         severity: 'HIGH,CRITICAL'
+        output: "trivy-vuln-results.json"  # This specifies the output file for Trivy results
+        format: 'json'  # Use 'json' to store results in a structured format
 
     # Optional: Verify that the Trivy scan output is in the expected location
     - name: Verify Trivy output
       run: |
-        ls -l ${{ github.workspace }}
+        ls -l ${{ github.workspace }}  # Check if the output file is in the workspace
 
     # Upload Trivy scan results
     - name: Upload a Build Artifact
       uses: actions/upload-artifact@v4.4.3
       with:
         name: trivy-vuln-results
-        path: ${{ github.workspace }}/trivy-vuln-results.json
+        path: ${{ github.workspace }}/trivy-vuln-results.json  # Ensure the correct path to the output file
         retention-days: 10
 
     # Image cleanup
