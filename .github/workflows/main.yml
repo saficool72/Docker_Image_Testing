@@ -4,8 +4,6 @@ on:
 
 env:
   AWS_REGION: us-east-1
-permissions:
-  contents: write
   
 jobs:
   docker_build:
@@ -110,6 +108,7 @@ jobs:
       uses: github/codeql-action/upload-sarif@v3
       with:
         sarif_file: 'trivy-results.sarif'
+        token: ${{ secrets.GITHUB_TOKEN }}
         
     # Upload Trivy Scan Results to GitHub Security Tab
     #- name: Upload Trivy Scan Results to GitHub Security Tab
