@@ -46,31 +46,38 @@ jobs:
         docker push ${{ secrets.ECR_REPOSITORY }}:latest
         docker push ${{ secrets.ECR_REPOSITORY }}:v1.0.0
 
-    # Enable this step for Trivy security scan
     - name: Aqua Security Trivy
       uses: aquasecurity/trivy-action@0.29.0
       with:
         image-ref: ${{ secrets.ECR_REPOSITORY }}:latest
         scan-type: image
         severity: 'HIGH,CRITICAL'
-        output: "trivy-vuln-results.json"  # This specifies the output file for Trivy results
-        format: 'json'  # Use 'json' to store results in a structured format
+        
+    # Enable this step for Trivy security scan
+    #- name: Aqua Security Trivy
+    #  uses: aquasecurity/trivy-action@0.29.0
+    #  with:
+    #    image-ref: ${{ secrets.ECR_REPOSITORY }}:latest
+    #    scan-type: image
+    #    severity: 'HIGH,CRITICAL'
+    #    output: "trivy-vuln-results.json"  # This specifies the output file for Trivy results
+    #    format: 'json'  # Use 'json' to store results in a structured format
 
     # Optional: Verify that the Trivy scan output is in the expected location
-    - name: Verify Trivy output
-      run: |
-        ls -l ${{ github.workspace }}  # Check if the output file is in the workspace
+    #- name: Verify Trivy output
+    #  run: |
+    #    ls -l ${{ github.workspace }}  # Check if the output file is in the workspace
 
     # Upload Trivy scan results
-    - name: Upload a Build Artifact
-      uses: actions/upload-artifact@v4.4.3
-      with:
-        name: trivy-vuln-results
-        path: ${{ github.workspace }}/trivy-vuln-results.json  # Ensure the correct path to the output file
-        retention-days: 10
+    #- name: Upload a Build Artifact
+    #  uses: actions/upload-artifact@v4.4.3
+    #  with:
+    #    name: trivy-vuln-results
+    #    path: ${{ github.workspace }}/trivy-vuln-results.json  # Ensure the correct path to the output file
+    #    retention-days: 10
 
     # Image cleanup
     - name: Image cleanup
       if: always()
       run: |
-        docker rmi hk_image:v1 || true
+        docker rmi hk_image:v1 ${{ secrets.ECR_REPOSITORY }}:latest ${{ secrets.ECR_REPOSITORY }}:v1.0.0 || true
