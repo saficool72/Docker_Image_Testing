@@ -48,22 +48,22 @@ jobs:
         docker push ${{ secrets.ECR_REPOSITORY }}:v1.0.0
 
     # Save the built image as an artifact to be used by the next job
-    - name: Upload Docker Image as Artifact
-      uses: actions/upload-artifact@v4.4.3
-      with:
-        name: docker-image
-        path: ./hk_image:v1
+    #- name: Upload Docker Image as Artifact
+    #  uses: actions/upload-artifact@v4.4.3
+    #  with:
+    #    name: docker-image
+    #    path: ./hk_image:v1
 
   trivy_scan:
     runs-on: ubuntu-latest
     needs: docker_build  # This job will run after the "docker_build" job is completed
 
     steps:
-    - name: Download Docker image artifact
+    #- name: Download Docker image artifact
       #uses: actions/download-artifact@v2
-      uses: ishworkh/docker-image-artifact-download@v2.1.0
-      with:
-        name: docker-image
+    #  uses: ishworkh/docker-image-artifact-download@v2.1.0
+    #  with:
+    #    name: docker-image
 
     - name: Authenticate to AWS ECR
       id: login-ecr
