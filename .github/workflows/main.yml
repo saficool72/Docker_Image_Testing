@@ -4,7 +4,9 @@ on:
 
 env:
   AWS_REGION: us-east-1
-
+permissions:
+  contents: write
+  
 jobs:
   docker_build:
     runs-on: ubuntu-latest
@@ -59,6 +61,10 @@ jobs:
     needs: docker_build  # This job will run after the "docker_build" job is completed
 
     steps:
+
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
     - name: "Configure AWS Credentials"
       id: Configure-AWS
       uses: aws-actions/configure-aws-credentials@v4
@@ -83,14 +89,22 @@ jobs:
         image-ref: ${{ secrets.ECR_REPOSITORY }}:latest
         scan-type: image
         severity: 'HIGH,CRITICAL'
-        #format: 'sarif'
-        #output: 'trivy-vuln-results.sarif'  # Save results to SARIF file
         format: 'sarif'
         output: 'trivy-results.sarif'
-  
+        vuln-type: 'os,library'
+
     - name: Check if SARIF file exists
       run: |
-        ls -l trivy-results.sarif
+        if [ -f "trivy-results.sarif" ]; then
+          echo "SARIF file exists"
+        else
+          echo "SARIF file does not exist"
+          exit 1
+        fi
+  
+    #- name: Check if SARIF file exists
+    #  run: |
+    #    ls -l trivy-results.sarif
         
     - name: Upload Trivy scan results to GitHub Security tab
       uses: github/codeql-action/upload-sarif@v3
