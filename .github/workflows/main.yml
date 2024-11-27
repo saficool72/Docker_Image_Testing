@@ -4,16 +4,17 @@ on:
 
 env:
   AWS_REGION: us-east-1
-  
+
 jobs:
-  build:
+  docker_build:
     runs-on: ubuntu-latest
+
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
 
-    # Optional: Remove if not needed
-    - name: Set up Docker Buildx (only if building multi-platform images)
+    # Optional: Set up Docker Buildx (only if building multi-platform images)
+    - name: Set up Docker Buildx (optional)
       uses: docker/setup-buildx-action@v3.7.1
 
     - name: Build docker image
@@ -22,7 +23,7 @@ jobs:
 
     - name: Filter docker image
       run: |
-        docker images --filter reference=hk_image:v1
+        docker images --filter reference=hk_image
 
     - name: "Configure AWS Credentials"
       id: Configure-AWS
@@ -46,38 +47,45 @@ jobs:
         docker push ${{ secrets.ECR_REPOSITORY }}:latest
         docker push ${{ secrets.ECR_REPOSITORY }}:v1.0.0
 
-    - name: Aqua Security Trivy
+    # Save the built image as an artifact to be used by the next job
+    - name: Upload Docker Image as Artifact
+      uses: actions/upload-artifact@v4.4.3
+      with:
+        name: docker-image
+        path: ./hk_image:v1
+
+  trivy_scan:
+    runs-on: ubuntu-latest
+    needs: docker_build  # This job will run after the "docker_build" job is completed
+
+    steps:
+    - name: Download Docker image artifact
+      uses: actions/download-artifact@v2
+      with:
+        name: docker-image
+
+    - name: Authenticate to AWS ECR
+      id: login-ecr
+      uses: aws-actions/amazon-ecr-login@v2
+
+    - name: Aqua Security Trivy Scan
       uses: aquasecurity/trivy-action@0.29.0
       with:
         image-ref: ${{ secrets.ECR_REPOSITORY }}:latest
         scan-type: image
         severity: 'HIGH,CRITICAL'
-        
-    # Enable this step for Trivy security scan
-    #- name: Aqua Security Trivy
-    #  uses: aquasecurity/trivy-action@0.29.0
-    #  with:
-    #    image-ref: ${{ secrets.ECR_REPOSITORY }}:latest
-    #    scan-type: image
-    #    severity: 'HIGH,CRITICAL'
-    #    output: "trivy-vuln-results.json"  # This specifies the output file for Trivy results
-    #    format: 'json'  # Use 'json' to store results in a structured format
+        format: 'json'
+        output: "trivy-vuln-results.json"  # Save results to a file
 
-    # Optional: Verify that the Trivy scan output is in the expected location
-    #- name: Verify Trivy output
-    #  run: |
-    #    ls -l ${{ github.workspace }}  # Check if the output file is in the workspace
+    # Upload Trivy scan results as an artifact
+    - name: Upload Trivy Scan Results
+      uses: actions/upload-artifact@v4.4.3
+      with:
+        name: trivy-vuln-results
+        path: ${{ github.workspace }}/trivy-vuln-results.json
+        retention-days: 10
 
-    # Upload Trivy scan results
-    #- name: Upload a Build Artifact
-    #  uses: actions/upload-artifact@v4.4.3
-    #  with:
-    #    name: trivy-vuln-results
-    #    path: ${{ github.workspace }}/trivy-vuln-results.json  # Ensure the correct path to the output file
-    #    retention-days: 10
-
-    # Image cleanup
     - name: Image cleanup
       if: always()
       run: |
-        docker rmi hk_image:v1 ${{ secrets.ECR_REPOSITORY }}:latest ${{ secrets.ECR_REPOSITORY }}:v1.0.0 || true
+        docker rmi ${{ secrets.ECR_REPOSITORY }}:latest ${{ secrets.ECR_REPOSITORY }}:v1.0.0 || true
