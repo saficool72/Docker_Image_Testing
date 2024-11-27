@@ -83,9 +83,17 @@ jobs:
         image-ref: ${{ secrets.ECR_REPOSITORY }}:latest
         scan-type: image
         severity: 'HIGH,CRITICAL'
+        format: 'sarif'
+        output: 'trivy-vuln-results.sarif'
        # format: 'json'
        # output: "trivy-vuln-results.json"  # Save results to a file
 
+      # Upload Trivy Scan Results (SARIF format)
+    - name: Upload Trivy Scan Results to GitHub Security Tab
+      uses: github/codeql-action/upload-sarif@v2
+      with:
+        sarif_file: trivy-vuln-results.sarif
+        
     # Upload Trivy scan results as an artifact
     #- name: Upload Trivy Scan Results
     #  uses: actions/upload-artifact@v4.4.3
