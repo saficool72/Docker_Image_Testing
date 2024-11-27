@@ -32,7 +32,8 @@ jobs:
       uses: aquasecurity/trivy-action@0.29.0
       with:
         scan-type: image
-        format: "github"
+        image-ref: '.'
+        format: 'github'
         output: "trivy-vuln-results.json"
         severity: "MEDIUM,HIGH,CRITICAL"
         scanners: "vuln"
