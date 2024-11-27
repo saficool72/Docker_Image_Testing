@@ -82,7 +82,8 @@ jobs:
       uses: aquasecurity/trivy-action@0.29.0
       with:
         image-ref: ${{ secrets.ECR_REPOSITORY }}:latest
-        #scan-type: image
+        scan-type: image
+        severity: 'HIGH,CRITICAL'
 
     - name: Image cleanup
       if: always()
