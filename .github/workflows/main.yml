@@ -1,10 +1,11 @@
 name: Docker Image CI
 on:
   workflow_dispatch:
- # push:
- #   branches: [ "main" ]
- # pull_request:
- #   branches: [ "main" ]
+  #push:
+  #  branches: [ "main" ]
+  #pull_request:
+  #  branches: [ "main" ]
+
 env:
   AWS_REGION: us-east-1
   
@@ -16,43 +17,18 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
 
-    - name: Set up Docker Buildx
+    # Optional: Remove if not needed
+    - name: Set up Docker Buildx (only if building multi-platform images)
       uses: docker/setup-buildx-action@v3.7.1
-      #uses: docker/setup-buildx-action@v3
-    
+
     - name: Build docker image
       run: |
         docker build -t hk_image:v1 .
-        
+
     - name: Filter docker image
       run: |
         docker images --filter reference=hk_image:v1
 
-    #- name: Aqua Security Trivy
-    #  uses: aquasecurity/trivy-action@0.29.0
-    #  with:
-     #   scan-type: image
-      #  image-ref: '.'
-      #  format: 'github'
-      #  output: "trivy-vuln-results.json"
-      #  severity: "MEDIUM,HIGH,CRITICAL"
-      #  scanners: "vuln"
-        
-    #- name: Upload a Build Artifact
-    #  uses: actions/upload-artifact@v4.4.3
-    #  with:
-    #    # Artifact name
-    #    name: trivy-vuln-results
-    #    path: '${{ github.workspace }}/trivy-vuln-results.json'
-    #    retention-days: 10  # 90 is the default
-        
-   # - name: Run container in detach mode
-   #   run: |
-   #     docker run --name my-cont1 -p 8081:80 -d hk_image:v1     
-   # - name: Check IP address
-   #   run: |
-   #     curl https://api.ipify.org
-   
     - name: "Configure AWS Credentials"
       id: Configure-AWS
       uses: aws-actions/configure-aws-credentials@v4
@@ -65,19 +41,17 @@ jobs:
       id: login-ecr
       uses: aws-actions/amazon-ecr-login@v2
 
-    #- name: create ECR repo
-    #  run: |
-    #    aws ecr create-repository --repository-name hk_nginx --region us-east-1
-    #891377196548.dkr.ecr.us-east-1.amazonaws.com/hk_nginx
-    
     - name: Tag the Image
       run: |
         docker tag hk_image:v1 ${{ secrets.ECR_REPOSITORY }}:latest
+        docker tag hk_image:v1 ${{ secrets.ECR_REPOSITORY }}:v1.0.0
 
     - name: Push the Image to Aws ECR
       run: |
         docker push ${{ secrets.ECR_REPOSITORY }}:latest
-        
+        docker push ${{ secrets.ECR_REPOSITORY }}:v1.0.0
+
+    # Enable this step for Trivy security scan
     - name: Aqua Security Trivy
       uses: aquasecurity/trivy-action@0.29.0
       with:
@@ -85,43 +59,21 @@ jobs:
         scan-type: image
         severity: 'HIGH,CRITICAL'
 
+    # Optional: Verify that the Trivy scan output is in the expected location
+    - name: Verify Trivy output
+      run: |
+        ls -l ${{ github.workspace }}
+
+    # Upload Trivy scan results
+    - name: Upload a Build Artifact
+      uses: actions/upload-artifact@v4.4.3
+      with:
+        name: trivy-vuln-results
+        path: ${{ github.workspace }}/trivy-vuln-results.json
+        retention-days: 10
+
+    # Image cleanup
     - name: Image cleanup
       if: always()
       run: |
-        docker rmi hk_image:v1
-        
-    #- name: Tag Docker image
-    #  run: |
-    #    docker tag ${{ secrets.ECR_REPOSITORY }}:latest ${{ secrets.ECR_REPOSITORY }}:latest
-   # - name: Push Docker image to AWS ECR
-   #   run: |
-   #     docker push ${{ secrets.ECR_REPOSITORY }}:latest
-        
-   # - name: Build, tag, and push docker image to Amazon ECR
-   #   env:
-   #     REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-   #     REPOSITORY: my_ecr_repo
-  #    IMAGE_TAG: ${{ github.sha }}
-   #   run: |
-    #    docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG .
-     #   docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
-
-   # - name: Docker meta
-   #   id: meta
-   #  uses: docker/metadata-action@v5
-   #   with:
-   #     images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
-   #     tags: |
-   #         type=semver,pattern={{version}}
-          
-   # - name: Build and push Docker images
-   #   id: build-image-push-to-aws-ecr
-   #   uses: docker/build-push-action@v6.9.0
-   #   with:
-   #     context: .
-   #     push: true
-   #     tags: ${{ steps.meta.outputs.tags }}
-  
-    #- name: setup-docker
-    #  uses: docker-practice/actions-setup-docker@v1
-      
+        docker rmi hk_image:v1 || true
