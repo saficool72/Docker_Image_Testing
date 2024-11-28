@@ -84,27 +84,28 @@ jobs:
         image-ref: ${{ secrets.ECR_REPOSITORY }}:latest
         scan-type: image
         severity: 'HIGH,CRITICAL'
-        format: 'table'
+        format: 'sarif'
+        output: 'trivy-vuln-results.sarif'
         vuln-type: 'os,library'
 
-    #- name: Check if SARIF file exists
-    #  run: |
-    #    if [ -f "trivy-results.sarif" ]; then
-    #      echo "SARIF file exists"
-    #    else
-    #      echo "SARIF file does not exist"
-    #      exit 1
-    #    fi
+    - name: Check if SARIF file exists
+      run: |
+        if [ -f "trivy-vuln-results.sarif" ]; then
+          echo "SARIF file exists"
+        else
+          echo "SARIF file does not exist"
+          exit 1
+        fi
   
-    #- name: Check if SARIF file exists
-    #  run: |
-    #    ls -l trivy-results.sarif
+    - name: Check if SARIF file exists
+      run: |
+        ls -l trivy-results.sarif
         
-    # Upload Trivy Scan Results to GitHub Security Tab
-    #- name: Upload Trivy Scan Results to GitHub Security Tab
-    #  uses: github/codeql-action/upload-sarif@v3
-    #  with:
-    #    sarif_file: trivy-vuln-results.sarif
+     #Upload Trivy Scan Results to GitHub Security Tab
+    - name: Upload Trivy Scan Results to GitHub Security Tab
+      uses: github/codeql-action/upload-sarif@v3
+      with:
+        sarif_file: 'trivy-vuln-results.sarif'
         
     # Upload Trivy scan results as an artifact
     #- name: Upload Trivy Scan Results
