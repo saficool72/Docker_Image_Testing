@@ -84,19 +84,20 @@ jobs:
         image-ref: ${{ secrets.ECR_REPOSITORY }}:latest
         scan-type: image
         severity: 'HIGH,CRITICAL'
+        format: 'table'
         #format: 'github'
-        format: 'sarif'
+        #format: 'sarif'
         #output: 'dependency-results.sbom.json'
-        output: 'trivy-vuln-results.sarif'
-        github-pat: ${{ secrets.GITHUB_TOKEN }}
+        #output: 'trivy-vuln-results.sarif'
+        #github-pat: ${{ secrets.GITHUB_TOKEN }}
         vuln-type: 'os,library'
 
-    - name: Upload trivy report as a Github artifact
-      uses: actions/upload-artifact@v4
-      with:
-        name: trivy-sbom-report
-        path: '${{ github.workspace }}/trivy-vuln-results.sarif'
-        retention-days: 20
+    #- name: Upload trivy report as a Github artifact
+    #  uses: actions/upload-artifact@v4
+    #  with:
+    #    name: trivy-sbom-report
+    #    path: '${{ github.workspace }}/trivy-vuln-results.sarif'
+    #    retention-days: 20
 
     #- name: Check if SARIF file exists
     #  run: |
