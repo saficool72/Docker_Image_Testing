@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hk-nginx-deployment
+  labels:
+    app: hknginx
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: hknginx
+  template:
+    metadata:
+      labels:
+        app: hknginx
+    spec:
+      containers:
+      - name: hk_nginx
+        image: 590184007385.dkr.ecr.us-east-1.amazonaws.com/hk_image:latest
+        ports:
+        - containerPort: 80
