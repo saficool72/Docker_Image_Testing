@@ -95,7 +95,7 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: trivy-sbom-report
-        path: '${{ github.workspace }}/dependency-results.sbom.json'
+        path: '${{ github.workspace }}/trivy-vuln-results.sarif'
         retention-days: 20
 
     #- name: Check if SARIF file exists
