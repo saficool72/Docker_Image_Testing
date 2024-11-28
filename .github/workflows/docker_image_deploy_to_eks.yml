@@ -2,8 +2,8 @@ name: Deploy Docker Image to Amazon EKS
 
 on:
   workflow_dispatch:
-  push:
-    branches: [ "main" ]
+  #push:
+  #  branches: [ "main" ]
 
 env:
   AWS_REGION: us-east-1                   # set this to your preferred AWS region, e.g. us-east-1
