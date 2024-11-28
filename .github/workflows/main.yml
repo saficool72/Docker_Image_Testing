@@ -99,7 +99,7 @@ jobs:
   
     - name: Check if SARIF file exists
       run: |
-        ls -l trivy-results.sarif
+        ls -l trivy-vuln-results.sarif
         
      #Upload Trivy Scan Results to GitHub Security Tab
     - name: Upload Trivy Scan Results to GitHub Security Tab
