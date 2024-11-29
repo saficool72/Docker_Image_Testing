@@ -54,4 +54,6 @@ jobs:
     - name: "Verify deployment"
       run: |
         kubectl get deployment
-        
+    - name: "Verify Service"
+      run: |
+        kubectl get svc
