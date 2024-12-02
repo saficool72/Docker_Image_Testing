@@ -16,7 +16,8 @@ spec:
     spec:
       containers:
       - name: hk-nginx
-        image: 590184007385.dkr.ecr.us-east-1.amazonaws.com/hk_image:latest
+        #image: 590184007385.dkr.ecr.us-east-1.amazonaws.com/hk_image:latest
+        image: 851725635917.dkr.ecr.us-east-1.amazonaws.com/hk-ecr-repo:v1.0.0
         imagePullPolicy: Always
         ports:
         - containerPort: 80
