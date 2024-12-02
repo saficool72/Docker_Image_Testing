@@ -47,14 +47,14 @@ jobs:
       run: |
         kubectl get nodes
 
-    - name: Login to ecr
-      run: |
-        aws ecr get-login-password --region ${{ env.AWS_REGION }} | docker login --username AWS --password-stdin 851725635917.dkr.ecr.us-east-1.amazonaws.com
+    #- name: Login to ecr
+    #  run: |
+    #    aws ecr get-login-password --region ${{ env.AWS_REGION }} | docker login --username AWS --password-stdin 851725635917.dkr.ecr.us-east-1.amazonaws.com
 
     - name: "Verify Image Accessibility"
       run: |
         # Optional: Check if the image is accessible in the registry
-        docker pull ${{ env.ECR_REPOSITORY_URI }}:latest
+        docker pull ${{ env.ECR_REPOSITORY }}:latest
         #docker pull 851725635917.dkr.ecr.us-east-1.amazonaws.com/hk-ecr-repo:latest
         
     - name: Deploy to EKS
