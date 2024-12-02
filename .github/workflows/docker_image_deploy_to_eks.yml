@@ -62,7 +62,7 @@ jobs:
         kubectl create -f manifests/deployment.yaml
         kubectl create -f manifests/service.yaml
         
-    - name: Wait for 10 seconds
+    - name: Wait for 20 seconds
       run: |
         echo "Waiting for 20 seconds..."
         sleep 20  # Pause for 20 seconds
