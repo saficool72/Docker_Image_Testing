@@ -54,7 +54,7 @@ jobs:
     - name: "Verify Image Accessibility"
       run: |
         # Optional: Check if the image is accessible in the registry
-        docker pull ${{ env.ECR_REPOSITORY_URI }}
+        docker pull ${{ env.ECR_REPOSITORY_URI }}:latest
         
     - name: Deploy to EKS
       run: |
