@@ -1,6 +1,7 @@
 apiVersion: v1
 kind: Service
 metadata:
+  namespace: hk-namespace
   name: hk-lb-service
 spec:
   selector:
