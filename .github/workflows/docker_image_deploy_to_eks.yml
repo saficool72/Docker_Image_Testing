@@ -10,6 +10,7 @@ env:
   #ECR_REPOSITORY: MY_ECR_REPOSITORY           # set this to your Amazon ECR repository name
   #CONTAINER_NAME: MY_CONTAINER_NAME           # set this to the name of the container in the
   EKS_CLUSTER_NAME: my-cluster              #set eks cluster name here
+  EKS_NAMESPACE_NAME: my-namespace
   
 jobs:
   deploy-to-eks:
@@ -56,7 +57,11 @@ jobs:
         # Optional: Check if the image is accessible in the registry
         #docker pull 851725635917.dkr.ecr.us-east-1.amazonaws.com/hk-ecr-repo:latest
         docker pull ${{ secrets.ECR_REPOSITORY }}:latest
-        
+
+    - name: Create Kubernetes Namespace
+      run: |
+        kubectl create namespace ${{ env.EKS_NAMESPACE_NAME }} || echo "Namespace '${{ env.EKS_NAMESPACE_NAME }}' already exists"
+          
     - name: Deploy to EKS
       run: |
         kubectl create -f manifests/deployment.yaml
