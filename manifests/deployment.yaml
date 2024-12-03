@@ -1,6 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
+  namespace: hk-namespace
   name: hk-nginx-deployment
   labels:
     app: hknginx
