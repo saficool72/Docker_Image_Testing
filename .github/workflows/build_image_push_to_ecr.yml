@@ -18,7 +18,7 @@ jobs:
       uses: SonarSource/sonarqube-scan-action@v4.1.0
       with:
         args: |
-          -Dsonar.projectKey=my-prj
+          #-Dsonar.projectKey=my-prj
           -Dsonar.organization=my-org
       env:
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
