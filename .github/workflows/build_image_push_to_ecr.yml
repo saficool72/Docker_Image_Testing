@@ -16,6 +16,8 @@ jobs:
 
     - name: Official SonarQube Scan
       uses: SonarSource/sonarqube-scan-action@v4.1.0
+      with:
+        sonar.projectKey: docker-image
       env:
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
