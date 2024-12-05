@@ -17,9 +17,8 @@ jobs:
     - name: Official SonarQube Scan
       uses: SonarSource/sonarqube-scan-action@v4.1.0
       with:
-        args:
-          -Dsonar.organization=my-org
-          -Dsonar.projectkey=my-prj
+        sonar.projectKey: my-prj
+        sonar.organization: my-org
       env:
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
