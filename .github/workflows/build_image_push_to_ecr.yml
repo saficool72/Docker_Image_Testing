@@ -49,20 +49,40 @@ jobs:
       #jq: The above script uses jq, a lightweight and flexible command-line JSON processor. It is installed by default on most Ubuntu-based GitHub runners. If it's not available, you may need to install it.
     - name: Install jq
       run: sudo apt-get install jq
-  
+
     - name: Wait for Quality Gate to pass
       run: |
         echo "Waiting for SonarQube Quality Gate..."
-        # Query SonarQube to get the Quality Gate status for the project
-        QUALITY_GATE_STATUS=$(curl -s -u ${{ secrets.SONAR_TOKEN }} "${{ secrets.SONAR_HOST_URL }}/api/qualitygates/project_status?projectKey=my-prj" | jq -r '.projectStatus.status')
-        
-        # Check if the Quality Gate status is 'OK', otherwise fail the build
+        for i in {1..5}; do
+          QUALITY_GATE_STATUS=$(curl -s -u ${{ secrets.SONAR_TOKEN }} "${{ secrets.SONAR_HOST_URL }}/api/qualitygates/project_status?projectKey=my-prj" | jq -r '.projectStatus.status')
+          if [[ "$QUALITY_GATE_STATUS" == "OK" ]]; then
+            echo "Quality Gate passed!"
+            break
+          else
+            echo "Quality Gate not passed yet. Retrying..."
+            sleep 10
+          fi
+        done
+
         if [[ "$QUALITY_GATE_STATUS" != "OK" ]]; then
           echo "Quality Gate failed!"
           exit 1
-        else
-          echo "Quality Gate passed!"
         fi
+
+     
+    #- name: Wait for Quality Gate to pass
+    #  run: |
+    #    echo "Waiting for SonarQube Quality Gate..."
+    #    # Query SonarQube to get the Quality Gate status for the project
+    #    QUALITY_GATE_STATUS=$(curl -s -u ${{ secrets.SONAR_TOKEN }} "${{ secrets.SONAR_HOST_URL }}/api/qualitygates/project_status?projectKey=my-prj" | jq -r '.projectStatus.status')
+    #    
+    #    # Check if the Quality Gate status is 'OK', otherwise fail the build
+    #    if [[ "$QUALITY_GATE_STATUS" != "OK" ]]; then
+    #      echo "Quality Gate failed!"
+    #      exit 1
+    #    else
+    #      echo "Quality Gate passed!"
+    #    fi
         
     #- name: Check Quality Gate
     #  run: |
