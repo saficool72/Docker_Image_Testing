@@ -24,10 +24,23 @@ jobs:
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
 
-    - name: Check Quality Gate
+    - name: Wait for Quality Gate to pass
       run: |
-        curl -u ${{ secrets.SONAR_TOKEN }} "${{ secrets.SONAR_HOST_URL }}/api/qualitygates/project_status?projectKey=my_project_key"
-
+        echo "Waiting for SonarQube Quality Gate..."
+        # Query SonarQube to get the Quality Gate status for the project
+        QUALITY_GATE_STATUS=$(curl -s -u ${{ secrets.SONAR_TOKEN }} "${{ secrets.SONAR_HOST_URL }}/api/qualitygates/project_status?projectKey=my-prj" | jq -r '.projectStatus.status')
+        
+        # Check if the Quality Gate status is 'OK', otherwise fail the build
+        if [[ "$QUALITY_GATE_STATUS" != "OK" ]]; then
+          echo "Quality Gate failed!"
+          exit 1
+        else
+          echo "Quality Gate passed!"
+        fi
+        
+    #- name: Check Quality Gate
+    #  run: |
+    #    curl -u ${{ secrets.SONAR_TOKEN }} "${{ secrets.SONAR_HOST_URL }}/api/qualitygates/project_status?projectKey=my_project_key"
   
     # Optional: Set up Docker Buildx (only if building multi-platform images)
     - name: Set up Docker Buildx (optional)
