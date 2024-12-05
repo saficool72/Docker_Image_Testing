@@ -27,14 +27,14 @@ jobs:
         project: my-proj
         path: .
         format: HTML
-        out: 'dependency-reports'
+        out: 'reports'
 
     - name: Upload Dependency-Check Report as Artifact
       uses: actions/upload-artifact@v4
       with:
-        name: dependency-reports
-        path: ${{github.workspace}}/dependency-reports
-        
+        name: dependencyc reports
+        path: ${{github.workspace}}/reports
+           
       
     - name: SonarQube Scan
       uses: SonarSource/sonarqube-scan-action@v4.1.0
