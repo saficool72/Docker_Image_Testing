@@ -14,7 +14,7 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
 
-    - name: Official SonarQube Scan
+    - name: SonarQube Scan
       uses: SonarSource/sonarqube-scan-action@v4.1.0
       with:
         args: |
@@ -23,7 +23,8 @@ jobs:
       env:
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
-
+        
+      #jq: The above script uses jq, a lightweight and flexible command-line JSON processor. It is installed by default on most Ubuntu-based GitHub runners. If it's not available, you may need to install it.
     - name: Install jq
       run: sudo apt-get install jq
   
