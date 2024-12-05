@@ -18,6 +18,8 @@ jobs:
       uses: trufflesecurity/trufflehog@main
       with:
         extra_args: --only-verified
+      env:    
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         
     - name: SonarQube Scan
       uses: SonarSource/sonarqube-scan-action@v4.1.0
