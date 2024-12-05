@@ -21,21 +21,18 @@ jobs:
       env:    
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-    #- name: Dependency Check
-    # uses: dependency-check/Dependency-Check_Action@1.1.0
-
-    - name: Install Dependency-Check
-      uses: gaunted/owasp-dependency-check-action@v1
+    - name: Dependency Check
+      uses: dependency-check/Dependency-Check_Action@1.1.0
       with:
-        # You can change the output directory or enable verbose output
-        output-directory: './dependency-check-report'
-        fail-build-on-vulnerabilities: 'false' # Default is false, set it to true if you want to fail the build on vulnerabilities.
+        project: my-proj
+        format: HTML
+        out: 'dependency-reports'
 
     - name: Upload Dependency-Check Report as Artifact
       uses: actions/upload-artifact@v4
       with:
-        name: dependency-check-report
-        path: ./dependency-check-report/dependency-check-report.html
+        name: dependency-reports
+        path: ${{github.workspace}}/dependency-reports
         
       
     - name: SonarQube Scan
