@@ -17,10 +17,15 @@ jobs:
     - name: Official SonarQube Scan
       uses: SonarSource/sonarqube-scan-action@v4.1.0
       with:
-        sonar.projectKey: docker-image
-      env:
+        #sonar.projectKey: docker-image
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      env:
         SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+
+    - name: Check Quality Gate
+      run: |
+        curl -u ${{ secrets.SONAR_TOKEN }} "${{ secrets.SONAR_HOST_URL }}/api/qualitygates/project_status?projectKey=my_project_key"
+
   
     # Optional: Set up Docker Buildx (only if building multi-platform images)
     - name: Set up Docker Buildx (optional)
