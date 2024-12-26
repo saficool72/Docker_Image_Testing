@@ -4,6 +4,7 @@ on:
 
 env:
   AWS_REGION: us-east-1
+  QG: myCodeQualityGate
   
 jobs:
   docker_build:
@@ -41,33 +42,45 @@ jobs:
       with:
         args: |
           -Dsonar.projectKey=my-prj
-          #-Dsonar.organization=my-org
+          -Dsonar.organization=my-org
       env:
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
-        
-      #jq: The above script uses jq, a lightweight and flexible command-line JSON processor. It is installed by default on most Ubuntu-based GitHub runners. If it's not available, you may need to install it.
-    - name: Install jq
-      run: sudo apt-get install jq
 
-    - name: Wait for Quality Gate to pass
-      run: |
-        echo "Waiting for SonarQube Quality Gate..."
-        for i in {1..5}; do
-          QUALITY_GATE_STATUS=$(curl -s -u ${{ secrets.SONAR_TOKEN }} "${{ secrets.SONAR_HOST_URL }}/api/qualitygates/project_status?projectKey=my-prj" | jq -r '.projectStatus.status')
-          if [[ "$QUALITY_GATE_STATUS" == "OK" ]]; then
-            echo "Quality Gate passed!"
-            break
-          else
-            echo "Quality Gate not passed yet. Retrying..."
-            sleep 10
-          fi
-        done
+      #Check the Quality Gate Status
+    - name: SonarQube Quality Gate Check
+      id: sonarqube-quality-gate-check
+      uses: SonarSource/sonarqube-quality-gate-action@v1.1.0
+      timeout-minutes: 5      #Force to fail step after specific time.
+      env:
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
 
-        if [[ "$QUALITY_GATE_STATUS" != "OK" ]]; then
-          echo "Quality Gate failed!"
-          exit 1
-        fi
+    - name: SonarQube Quality Gate Status
+      run: echo "The Quality Gate status is ${{ steps.sonarqube-quality-gate-check.outputs.quality-gate-status }}"
+      
+   #   #jq: The above script uses jq, a lightweight and flexible command-line JSON processor. It is installed by default on most Ubuntu-based GitHub runners. If it's not available, you may need to install it.
+   # - name: Install jq
+   #   run: sudo apt-get install jq
+
+    #- name: Wait for Quality Gate to pass
+    #  run: |
+    #    echo "Waiting for SonarQube Quality Gate..."
+    #    for i in {1..5}; do
+    #      QUALITY_GATE_STATUS=$(curl -s -u ${{ secrets.SONAR_TOKEN }} "${{ secrets.SONAR_HOST_URL }}/api/qualitygates/project_status?projectKey=my-prj" | jq -r '.projectStatus.status')
+    #      if [[ "$QUALITY_GATE_STATUS" == "OK" ]]; then
+    #        echo "Quality Gate passed!"
+    #        break
+    #      else
+    #        echo "Quality Gate not passed yet. Retrying..."
+    #        sleep 10
+    #      fi
+    #    done
+
+    #    if [[ "$QUALITY_GATE_STATUS" != "OK" ]]; then
+    #      echo "Quality Gate failed!"
+    #      exit 1
+    #    fi
 
      
     #- name: Wait for Quality Gate to pass
