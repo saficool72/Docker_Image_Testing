@@ -42,7 +42,7 @@ jobs:
       with:
         args: |
           -Dsonar.projectKey=my-prj
-          -Dsonar.organization=my-org
+          #-Dsonar.organization=my-org
       env:
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
