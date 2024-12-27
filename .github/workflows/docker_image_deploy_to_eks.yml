@@ -7,10 +7,8 @@ on:
 
 env:
   AWS_REGION: us-east-1                   # set this to your preferred AWS region, e.g. us-east-1
-  #ECR_REPOSITORY: MY_ECR_REPOSITORY           # set this to your Amazon ECR repository name
-  #CONTAINER_NAME: MY_CONTAINER_NAME           # set this to the name of the container in the
   EKS_CLUSTER_NAME: my-cluster              #set eks cluster name here
-  EKS_NAMESPACE_NAME: my-namespace
+  EKS_NAMESPACE_NAME: hk-namespace
   
 jobs:
   KubeLinter_job:
