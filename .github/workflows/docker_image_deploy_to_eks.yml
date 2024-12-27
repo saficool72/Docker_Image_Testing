@@ -86,6 +86,7 @@ jobs:
           
     - name: Deploy to EKS
       run: |
+        kubectl create -f manifests/namespace.yaml
         kubectl create -f manifests/deployment.yaml
         kubectl create -f manifests/service.yaml
         
@@ -93,7 +94,9 @@ jobs:
       run: |
         echo "Waiting for 20 seconds..."
         sleep 20  # Pause for 20 seconds
-          
+
+    - name: "Verify Namespace"
+      run: kubectl get namespaces
     - name: "Verify pod"
       run: |
         kubectl get pods -o wide
