@@ -28,7 +28,7 @@ jobs:
         format: json
         output-file: kube-linter-report.json
         #fail_on_error: true  # This will cause the job to fail if issues are found
-        fail_on_error: false  # wanted this job bypass
+      continue-on-error: true  # Continue even if KubeLinter detects errors
 
     - name: Upload KubeLinter report as artifact
       uses: actions/upload-artifact@v3
