@@ -7,8 +7,8 @@ env:
   QG: myCodeQualityGate
   
 jobs:
-  docker_build:
-    name: Build Docker Image
+  scannjob_for_secrets_dependency_check:
+    name: Job to scan the Secrets & dependency-check
     runs-on: ubuntu-latest
 
     steps:
@@ -35,7 +35,14 @@ jobs:
       with:
         name: dependencyc reports
         path: ${{github.workspace}}/reports
-           
+
+  Sonar_scan_job:
+    name: Job for SonarQube Scan
+    runs-on: ubuntu-latest
+    steps:
+
+    #- name: Checkout code
+    #  uses: actions/checkout@v4
       
     - name: SonarQube Scan
       uses: SonarSource/sonarqube-scan-action@v4.1.0
@@ -102,6 +109,12 @@ jobs:
     #    curl -u ${{ secrets.SONAR_TOKEN }} "${{ secrets.SONAR_HOST_URL }}/api/qualitygates/project_status?projectKey=my_project_key"
   
     # Optional: Set up Docker Buildx (only if building multi-platform images)
+  
+  Docker_build_job:
+    name: Job to Build Docker Image
+    runs-on: ubuntu-latest
+    steps:
+
     - name: Set up Docker Buildx (optional)
       uses: docker/setup-buildx-action@v3.7.1
 
