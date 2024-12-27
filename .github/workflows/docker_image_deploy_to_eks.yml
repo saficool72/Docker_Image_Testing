@@ -13,9 +13,24 @@ env:
   EKS_NAMESPACE_NAME: my-namespace
   
 jobs:
+  KubeLinter_job:
+    name: KubeLinter
+    runs-on: ubuntu-latest
+    steps:
+    #- name: Checkout
+    #  uses: actions/checkout@v4
+    
+    - name: Scan Yaml files with KubeLinter
+      id: kube-linter-action
+      uses: stackrox/kube-linter-action@v1.0.5
+      with:
+        directory: manifests
+
+
   deploy-to-eks:
     name: Deploy to EKS
     runs-on: ubuntu-latest
+    needs: KubeLinter_job
     steps:
     - name: Checkout
       uses: actions/checkout@v4
