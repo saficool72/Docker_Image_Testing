@@ -65,15 +65,15 @@ jobs:
       run: |
         kubectl version --client
 
-    - name: Kubernetes Set Context
-      uses: Azure/k8s-set-context@v3.0
-      with:
-        method: kubeconfig
-        #kubeconfig: 
-        cluster-name: ${{ env.EKS_CLUSTER_NAME }}
-    #- name: Update kube config
-    #  run: |
-    #    aws eks update-kubeconfig --name ${{ env.EKS_CLUSTER_NAME }} --region ${{ env.AWS_REGION }}
+    #- name: Kubernetes Set Context
+    #  uses: Azure/k8s-set-context@v3.0
+    #  with:
+    #    method: kubeconfig
+    #    cluster-name: ${{ env.EKS_CLUSTER_NAME }}
+    
+    - name: Update kube config
+      run: |
+        aws eks update-kubeconfig --name ${{ env.EKS_CLUSTER_NAME }} --region ${{ env.AWS_REGION }}
 
     - name: "Verify nodes"
       run: |
